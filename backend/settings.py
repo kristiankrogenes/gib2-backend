@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-u!6o89ua-f8_w*99m!ygrqf@c--sm=1c6q2!vspjnlaq%r_z%p
 # EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'gib2backend.herokuapp.com']
 
