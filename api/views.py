@@ -26,9 +26,9 @@ class DeveloperView(APIView):
 class GasStationView(APIView):
     def get(self, request):
         gasstations = GasStation.objects.all()
-        serializer = DeveloperSerializer(gasstations, many=True)
+        serializer = GasStationSerializer(gasstations, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request, format=None):
         serializer = GasStationSerializer(data=request.data)
         if serializer.is_valid():
