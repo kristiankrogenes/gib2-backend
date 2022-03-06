@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import CustomUserSerializer, UserInfoSerializer
-from django.contrib.auth.models import User
+from .models import UserAccount
 
 class RegisterUser(APIView):
     
@@ -12,7 +12,7 @@ class RegisterUser(APIView):
 
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
-        if User.objects.filter(username=request.data['username']).exists():
+        if UserAccount.objects.filter(username=request.data['username']).exists():
             return Response({"message":"User already exists"}, status=status.HTTP_226_IM_USED)
         if serializer.is_valid():
             student = serializer.save()
@@ -23,6 +23,7 @@ class RegisterUser(APIView):
 class UserInfo(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
+        print("REQUEST:", request)
         user = request.user
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)

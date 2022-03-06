@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import UserAccount
 
 class CustomUserSerializer(serializers.ModelSerializer):
 
@@ -9,7 +9,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
 
     class Meta:
-        model = User
+        model = UserAccount
         fields = ('username', 'password', 'first_name', 'last_name')
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -23,5 +23,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserAccount
         fields = ('username', 'first_name', 'last_name')

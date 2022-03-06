@@ -3,8 +3,11 @@ from django.contrib.auth.models import AbstractUser
 import random
 import string
 
-# class Account(AbstractUser):
-#     score = models.IntegerField(default=0)
+class UserAccount(AbstractUser):
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.username
 
 # email_verified = models.BooleanField(default=False)
 # email_token = models.CharField(max_length=100, null=True, default=0)
