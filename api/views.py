@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Developer, GasStation
-from .serializers import DeveloperSerializer, GasStationSerializer
+from .models import Developer, GasStation, Price
+from .serializers import DeveloperSerializer, GasStationSerializer, PriceSerializer
 
 
 def api_home_view(request):
@@ -31,6 +31,19 @@ class GasStationView(APIView):
 
     def post(self, request, format=None):
         serializer = GasStationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PriceView(APIView):
+    def get(self, request):
+        prices = Price.objects.all()
+        serializer = PriceSerializer(prices, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = PriceSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
