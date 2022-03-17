@@ -100,17 +100,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'd2ae69a13cnfpg',                      
-        'USER': 'jjvuhuybirnpvv',                     
-        'PASSWORD': '1f43df3d55261271aff66579e4a1bbc5e670c4b4fda235a5ec9edf7ea1536e31',                  
-        'HOST': 'ec2-54-157-160-218.compute-1.amazonaws.com',                      
-        'PORT': '5432',                      
-    }
-}
-
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
@@ -199,6 +188,17 @@ SIMPLE_JWT = {
 
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'd2ae69a13cnfpg',                      
+        'USER': 'jjvuhuybirnpvv',                     
+        'PASSWORD': '1f43df3d55261271aff66579e4a1bbc5e670c4b4fda235a5ec9edf7ea1536e31',                  
+        'HOST': 'ec2-54-157-160-218.compute-1.amazonaws.com',                      
+        'PORT': '5432',                      
+    }
+}
 
 try:
     from .local_settings import *
