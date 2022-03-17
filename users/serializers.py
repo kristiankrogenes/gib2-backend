@@ -25,3 +25,8 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
         fields = ('username', 'first_name', 'last_name')
+
+class UserScoreListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAccount
+        fields = ('username', 'first_name', 'last_name', 'score')
