@@ -1,4 +1,4 @@
-from dataclasses import fields
+# from dataclasses import fields
 from pyexpat import model
 from rest_framework import serializers
 from rest_framework_gis import serializers

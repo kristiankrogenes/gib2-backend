@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Developer, GasStation, Price
 from .serializers import DeveloperSerializer, GasStationSerializer, PriceSerializer
 
@@ -24,6 +25,9 @@ class DeveloperView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GasStationView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         gasstations = GasStation.objects.all()
         serializer = GasStationSerializer(gasstations, many=True)
@@ -37,6 +41,9 @@ class GasStationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PriceView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         prices = Price.objects.all()
         serializer = PriceSerializer(prices, many=True)
@@ -44,7 +51,10 @@ class PriceView(APIView):
     
     def post(self, request, format=None):
         serializer = PriceSerializer(data=request.data)
+        user = request.user
         if serializer.is_valid():
             serializer.save()
+            user.score += 1
+            user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

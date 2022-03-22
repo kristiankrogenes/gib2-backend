@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import CustomUserSerializer, UserInfoSerializer
+from .serializers import CustomUserSerializer, UserInfoSerializer, UserScoreListSerializer
 from .models import UserAccount
 
 class RegisterUser(APIView):
@@ -23,7 +23,6 @@ class RegisterUser(APIView):
 class UserInfo(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        print("REQUEST:", request)
         user = request.user
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)
@@ -33,4 +32,9 @@ class UserView(APIView):
     def get(self, request):
         users = UserAccount.objects.all()
         serializer = UserInfoSerializer(users, many=True)
+        return Response(serializer.data)
+class UserScoreList(APIView):
+    def get(self, request):
+        users = UserAccount.objects.order_by('score').reverse()
+        serializer = UserScoreListSerializer(users, many=True)
         return Response(serializer.data)
