@@ -27,3 +27,10 @@ class UserInfo(APIView):
         user = request.user
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)
+
+class UserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        users = UserAccount.objects.all()
+        serializer = UserInfoSerializer(users, many=True)
+        return Response(serializer.data)
