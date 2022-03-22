@@ -6,8 +6,9 @@ from django.contrib.gis.geos import Point
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        filepath = os.path.join(sys.path[0], "stations.geojson")
-        with open(filepath, encoding='utf8') as f:
+        module_dir = os.path.dirname(__file__)
+        file_path = os.path.join(module_dir, "stations.geojson")
+        with open(file_path, encoding='utf8') as f:
             gj = geojson.load(f)
         for station in gj['features']:
             try:
