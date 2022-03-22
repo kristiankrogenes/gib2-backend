@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Developer, GasStation, Price
 from .serializers import DeveloperSerializer, GasStationSerializer, PriceSerializer
-
+from .utils import calculations
 
 def api_home_view(request):
     return HttpResponse("Api for gib2 prosjekt")
@@ -58,3 +58,10 @@ class PriceView(APIView):
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class NearestStations(APIView):
+    def get(self, request):
+        stations = calculations.find_nearest_stations(request.data['lon'], request.data['lat'])
+        serializer = GasStationSerializer(stations, many=True)
+        print(request.data)
+        return Response(serializer.data)
