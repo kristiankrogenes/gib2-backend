@@ -27,6 +27,12 @@ class UserInfo(APIView):
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)
 
+class UserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        users = UserAccount.objects.all()
+        serializer = UserInfoSerializer(users, many=True)
+        return Response(serializer.data)
 class UserScoreList(APIView):
     def get(self, request):
         users = UserAccount.objects.order_by('score').reverse()

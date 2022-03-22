@@ -1,13 +1,7 @@
 # from dataclasses import fields
-from pyexpat import model
 from rest_framework import serializers
 from rest_framework_gis import serializers
-from .models import Developer, GasStation, Price
-
-class DeveloperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Developer
-        fields = '__all__'
+from .models import GasStation, Price
 
 class GasStationSerializer(serializers.GeoFeatureModelSerializer):
     class Meta:
