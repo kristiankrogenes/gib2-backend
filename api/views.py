@@ -47,8 +47,7 @@ class PriceView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class NearestStations(APIView):
-    def get(self, request):
-        stations = calculations.find_nearest_stations(request.data['lon'], request.data['lat'])
+    def get(self, request, *args, **kwargs):
+        stations = calculations.find_nearest_stations(request.query_params['lon'], request.query_params['lat'])
         serializer = GasStationSerializer(stations, many=True)
-        print(request.data)
         return Response(serializer.data)
