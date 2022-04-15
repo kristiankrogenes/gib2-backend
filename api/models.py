@@ -24,4 +24,4 @@ class Price(models.Model):
     electric = models.FloatField(blank=True)
 
     def __str__(self):
-        return "Price " + self.id + " - " + self.gas_station
+        return f"Price {self.id} - {self.gas_station}"

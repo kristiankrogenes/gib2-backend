@@ -51,3 +51,8 @@ class NearestStations(APIView):
         stations = calculations.find_nearest_stations(request.query_params['lon'], request.query_params['lat'])
         serializer = GasStationSerializer(stations, many=True)
         return Response(serializer.data)
+
+class InsightView(APIView):
+    def get(self, request):
+        insights = calculations.get_data_insights()
+        return Response(insights)
