@@ -1,7 +1,7 @@
 # from dataclasses import fields
 from rest_framework import serializers
 from rest_framework_gis import serializers
-from .models import GasStation, Price
+from .models import County, GasStation, Price
 
 class GasStationSerializer(serializers.GeoFeatureModelSerializer):
     class Meta:
@@ -12,4 +12,9 @@ class GasStationSerializer(serializers.GeoFeatureModelSerializer):
 class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
+        fields = '__all__'
+
+class CountySerializer(serializers.GeoFeatureModelListSerializer):
+        model = County
+        geo_field = 'geom'
         fields = '__all__'

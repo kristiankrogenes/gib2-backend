@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import GasStation, Price
-from .serializers import GasStationSerializer, PriceSerializer
+from .models import County, GasStation, Price
+from .serializers import GasStationSerializer, PriceSerializer, CountySerializer
 from .utils import calculations
 
 def api_home_view(request):
@@ -56,3 +56,18 @@ class InsightView(APIView):
     def get(self, request):
         insights = calculations.get_data_insights()
         return Response(insights)
+
+
+class CountyView(APIView):
+
+    def get(self, request):
+        counties = County.objects.all()
+        serializer = CountySerializer(counties, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = CountySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
