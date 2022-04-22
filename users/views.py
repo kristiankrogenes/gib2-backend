@@ -7,9 +7,6 @@ from .serializers import CustomUserSerializer, UserInfoSerializer, UserScoreList
 from .models import UserAccount
 
 class RegisterUser(APIView):
-    
-    permission_classes = (AllowAny, )
-
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if UserAccount.objects.filter(username=request.data['username']).exists():
@@ -33,6 +30,7 @@ class UserView(APIView):
         users = UserAccount.objects.all()
         serializer = UserInfoSerializer(users, many=True)
         return Response(serializer.data)
+        
 class UserScoreList(APIView):
     def get(self, request):
         users = UserAccount.objects.order_by('score').reverse()
