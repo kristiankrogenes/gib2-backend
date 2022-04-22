@@ -18,6 +18,16 @@ def find_nearest_stations(lon, lat):
                 break
     return nearest_stations
 
+def get_stations_inside_radius(lon, lat, rad):
+    current_position = GEOSGeometry('POINT(' + str(lon) + ' ' + str(lat) + ')', srid=4326)  
+    stations = GasStation.objects.all()
+    stations_inside_radius = []
+    for station in stations:
+        dist = current_position.distance(station.geom) * 100 # Distance in km
+        if dist <= rad:
+            stations_inside_radius.append(station)
+    return stations_inside_radius
+
 def get_data_insights():
     insights = {
         'county': {},
