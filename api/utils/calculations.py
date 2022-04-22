@@ -46,112 +46,34 @@ def get_data_insights():
             }
         }
     }
+    def update_insights(insight_dict, fuels):
+        for key, value in fuels.items():
+            print(key, '->', value)
+            if value > insight_dict['prices'][key]['max']:
+                insight_dict['prices'][key]['max'] = value
+            if value < insight_dict['prices'][key]['min']:
+                insight_dict['prices'][key]['min'] = value
+            insight_dict['prices'][key]['sum'] += value
+            insight_dict['prices'][key]['average'] = insight_dict['prices'][key]['sum'] / insight_dict['total']
 
     stations = GasStation.objects.all()
     for station in stations:
         if station.municipality in insights['municipality']:
             insights['municipality'][station.municipality]['total'] += 1
         else:   
-            insights['municipality'][station.municipality] = {
-                'total': 1,
-                'prices': {
-                    'diesel': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    },
-                    'octane_95': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    },
-                    'electric': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    }
-                }
-            }
+            insights['municipality'][station.municipality] = insights_template
         if station.county in insights['county']:
             insights['county'][station.county]['total'] += 1
         else:
-            insights['county'][station.county] = {
-                'total': 1,
-                'prices': {
-                    'diesel': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    },
-                    'octane_95': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    },
-                    'electric': {
-                        'max': -1,
-                        'min': 100,
-                        'average': None,
-                        'sum': 0
-                    }
-                }
-            }
+            insights['county'][station.county] = insights_template
     
     prices = Price.objects.all()
     for price in prices:
-        diesel, octane_95, electric =  price.diesel, price.octane_95, price.electric
+        fuels =  {'diesel': price.diesel, 'octane_95': price.octane_95, 'electric': price.electric}
         insight_municipality = insights['municipality'][price.gas_station.municipality]
         insight_county = insights['county'][price.gas_station.county]
 
-        # MUNICIPALITY 
-        if diesel > insight_municipality['prices']['diesel']['max']:
-            insight_municipality['prices']['diesel']['max'] = diesel
-        if octane_95 > insight_municipality['prices']['octane_95']['max']:
-            insight_municipality['prices']['octane_95']['max'] = octane_95
-        if electric > insight_municipality['prices']['electric']['max']:
-            insight_municipality['prices']['electric']['max'] = electric
-        
-        if diesel < insight_municipality['prices']['diesel']['min']:
-            insight_municipality['prices']['diesel']['min'] = diesel
-        if octane_95 < insight_municipality['prices']['octane_95']['min']:
-            insight_municipality['prices']['octane_95']['min'] = octane_95
-        if electric < insight_municipality['prices']['electric']['min']:
-            insight_municipality['prices']['electric']['min'] = electric
-
-        insight_municipality['prices']['diesel']['sum'] += diesel
-        insight_municipality['prices']['octane_95']['sum'] += octane_95
-        insight_municipality['prices']['electric']['sum'] += electric
-
-        insight_municipality['prices']['diesel']['average'] = insight_municipality['prices']['diesel']['sum'] / insight_municipality['total']
-        insight_municipality['prices']['octane_95']['average'] = insight_municipality['prices']['octane_95']['sum'] / insight_municipality['total']
-        insight_municipality['prices']['electric']['average'] = insight_municipality['prices']['electric']['sum'] / insight_municipality['total']     
-        
-        # COUNTY 
-        if diesel > insight_county['prices']['diesel']['max']:
-            insight_county['prices']['diesel']['max'] = diesel
-        if octane_95 > insight_county['prices']['octane_95']['max']:
-            insight_county['prices']['octane_95']['max'] = octane_95
-        if electric > insight_county['prices']['electric']['max']:
-            insight_county['prices']['electric']['max'] = electric
-
-        if diesel < insight_county['prices']['diesel']['min']:
-            insight_county['prices']['diesel']['min'] = diesel
-        if octane_95 < insight_county['prices']['octane_95']['min']:
-            insight_county['prices']['octane_95']['min'] = octane_95
-        if electric < insight_county['prices']['electric']['min']:
-            insight_county['prices']['electric']['min'] = electric
-
-        insight_county['prices']['diesel']['sum'] += diesel
-        insight_county['prices']['octane_95']['sum'] += octane_95
-        insight_county['prices']['electric']['sum'] += electric
-
-        insight_county['prices']['diesel']['average'] = insight_county['prices']['diesel']['sum'] / insight_county['total']
-        insight_county['prices']['octane_95']['average'] = insight_county['prices']['octane_95']['sum'] / insight_county['total']
-        insight_county['prices']['electric']['average'] = insight_county['prices']['electric']['sum'] / insight_county['total']
+        update_insights(insight_municipality, fuels)
+        update_insights(insight_county, fuels)
 
     return insights
