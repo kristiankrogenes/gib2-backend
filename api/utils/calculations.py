@@ -59,7 +59,6 @@ def get_data_insights():
     }
     def update_insights(insight_dict, fuels):
         for key, value in fuels.items():
-            print(key, '->', value)
             if value > insight_dict['prices'][key]['max']:
                 insight_dict['prices'][key]['max'] = value
             if value < insight_dict['prices'][key]['min']:
