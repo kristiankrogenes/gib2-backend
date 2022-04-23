@@ -70,7 +70,6 @@ class InsightView(APIView):
 
 
 class CountyView(APIView):
-
     def get(self, request):
         counties = County.objects.all()
         serializer = CountySerializer(counties, many=True)

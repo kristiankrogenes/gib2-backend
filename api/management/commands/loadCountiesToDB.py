@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from api.models import County
 import geojson
 import os, sys
-from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.geos import GEOSGeometry
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -13,9 +13,10 @@ class Command(BaseCommand):
         for county in counties['features']:
             try:
                 c, created = County.objects.get_or_create(
-                    id=county['properties']['fylkesnummer'],
-                    name=county['properties']['navn']['navn'],
-                    geom=Polygon(county['geometry']['coordinates'])
+                    id=int(county['properties']['fylkesnummer']),
+                    name=county['properties']['navn'][0]['navn'],
+                    geom=GEOSGeometry(str(county['geometry']))
                 )
-            except:
+            except Exception as e:
                 print("County not allowed")
+                print(e)
