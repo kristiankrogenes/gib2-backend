@@ -10,7 +10,7 @@ class Command(BaseCommand):
         file_path = os.path.join(module_dir, "stations.geojson")
         with open(file_path, encoding='utf8') as f:
             gj = geojson.load(f)
-        for station in gj['features'][:300]:
+        for station in gj['features']:
             try:
                 GS, created = GasStation.objects.get_or_create(
                     name=station['properties']['name'],
