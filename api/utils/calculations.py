@@ -85,5 +85,35 @@ def get_data_insights():
 
         update_insights(insight_municipality, fuels)
         update_insights(insight_county, fuels)
+    histogram = { 
+      'diesel': {'0': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0},
+      'octane_95': {'0': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0},
+      'electric': {'0': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0}
+    }
+    print(prices)
+    for price in prices:
+      fuels =  {'diesel': price.diesel, 'octane_95': price.octane_95, 'electric': price.electric}
+      for key, value in fuels.items():
+        print(value)
+        if value < 16:
+          histogram[key]['0'] += 1
+        if 16 <= value < 17:
+          histogram[key]['16'] += 1
+        if 17 <= value < 18:
+          histogram[key]['17'] += 1
+        if 18 <= value < 19:
+          histogram[key]['18'] += 1
+        if 19 <= value < 20:
+          histogram[key]['19'] += 1
+        if 20 <= value < 21:
+          histogram[key]['20'] += 1
+        if 21 <= value < 22:
+          histogram[key]['21'] += 1
+        if 22 <= value < 23:
+          histogram[key]['22'] += 1
+        if 23 <= value < 40:
+          histogram[key]['23'] += 1
+    
+    insights['histogram'] = histogram
 
     return insights
