@@ -24,4 +24,10 @@ class Price(models.Model):
     electric = models.FloatField(blank=True)
 
     def __str__(self):
-        return "Price " + self.id + " - " + self.gas_station
+        return f"Price {self.id} - {self.gas_station}"
+
+
+class County(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    geom = models.PolygonField(blank=True, null=True)
