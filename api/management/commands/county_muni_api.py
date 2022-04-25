@@ -1,8 +1,5 @@
 from django.core.management.base import BaseCommand
-from api.models import *
-import geojson
-import os, sys
-from django.contrib.gis.geos import Point
+from api.models import GasStation
 import requests
 
 class Command(BaseCommand):

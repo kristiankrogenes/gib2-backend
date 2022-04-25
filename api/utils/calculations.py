@@ -1,6 +1,6 @@
 from api.models import GasStation, Price
 from django.contrib.gis.geos import GEOSGeometry
-import copy
+from copy import deepcopy
 
 def find_nearest_stations(lon, lat):
     current_position = GEOSGeometry('POINT(' + str(lon) + ' ' + str(lat) + ')', srid=4326)  
@@ -71,11 +71,11 @@ def get_data_insights():
         if station.municipality in insights['municipality']:
             insights['municipality'][station.municipality]['total'] += 1
         else:   
-            insights['municipality'][station.municipality] = copy.deepcopy(insights_template)
+            insights['municipality'][station.municipality] = deepcopy(insights_template)
         if station.county in insights['county']:
             insights['county'][station.county]['total'] += 1
         else:
-            insights['county'][station.county] = copy.deepcopy(insights_template)
+            insights['county'][station.county] = deepcopy(insights_template)
     
     prices = Price.objects.all()
     for price in prices:
@@ -85,5 +85,22 @@ def get_data_insights():
 
         update_insights(insight_municipality, fuels)
         update_insights(insight_county, fuels)
+    default_histogram = {'0': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0}
+    histogram = { 
+      'diesel': deepcopy(default_histogram),
+      'octane_95': deepcopy(default_histogram),
+      'electric': deepcopy(default_histogram)
+    }
+    values = [0, 16, 17, 18, 19, 20, 21, 22, 23]    
+    for price in prices:
+      fuels =  {'diesel': price.diesel, 'octane_95': price.octane_95, 'electric': price.electric}
+      for key, value in fuels.items():
+        for i in range(1, len(values)):
+          if i == len(values) - 1 and value >= values[i]:
+            histogram[key][i] += 1
+          if values[i-1] <= value < values[i]:
+            histogram[key][str(values[i-1])] += 1
+    
+    insights['histogram'] = histogram
 
     return insights
