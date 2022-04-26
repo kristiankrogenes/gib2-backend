@@ -1,5 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from postgis import Point
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -81,3 +82,25 @@ class CountyView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FuzzyScoreView(APIView):
+     def get(self, request, *args, **kwargs):
+         score = calculations.calculateFuzzyScore(
+            #  request.query_params['price_weight'],
+            #  request.query_params['duration_weight'],
+            #  request.query_params['dict']
+            0.75,
+            0.25,
+            {1: {
+                'price': 20.83,
+                'duration': 580,
+            },
+            2: {
+                'price': 25.08,
+                'duration': 300,
+            }
+            }
+         )
+
+         serializer = GasStationSerializer(score, many=True)
+         return Response(score)
