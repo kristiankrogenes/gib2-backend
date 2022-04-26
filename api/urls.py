@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import FuzzyScoreView, FuzzyScoreView, GasStationView, api_home_view, PriceView, NearestStations, InsightView, StationsInsideRadius, CountyView
+from .views import FuzzyScoreView, GasStationView, api_home_view, PriceView, NearestStations, InsightView, StationsInsideRadius, CountyView
 
 urlpatterns = [
     path('', api_home_view),

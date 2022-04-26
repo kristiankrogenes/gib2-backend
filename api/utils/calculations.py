@@ -1,4 +1,3 @@
-from unittest import result
 from api.models import GasStation, Price
 from django.contrib.gis.geos import GEOSGeometry
 from copy import deepcopy

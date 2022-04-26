@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import County, GasStation, Price
 from .serializers import GasStationSerializer, PriceSerializer, CountySerializer
 from .utils import calculations
-import json
 
 def api_home_view(request):
     return HttpResponse("Api for gib2 prosjekt")
@@ -63,12 +62,10 @@ class StationsInsideRadius(APIView):
         serializer = GasStationSerializer(stations, many=True)
         return Response(serializer.data)
 
-
 class InsightView(APIView):
     def get(self, request):
         insights = calculations.get_data_insights()
         return Response(insights)
-
 
 class CountyView(APIView):
     def get(self, request):
