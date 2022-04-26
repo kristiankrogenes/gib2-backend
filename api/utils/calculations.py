@@ -2,6 +2,8 @@ from unittest import result
 from api.models import GasStation, Price
 from django.contrib.gis.geos import GEOSGeometry
 from copy import deepcopy
+from django.conf import settings
+import requests
 
 def find_nearest_stations(lon, lat):
     current_position = GEOSGeometry('POINT(' + str(lon) + ' ' + str(lat) + ')', srid=4326)  
@@ -106,21 +108,40 @@ def get_data_insights():
 
     return insights
 
+def get_optimized_route(start, end):
+  token = settings.MAPBOX_ACCESS_TOKEN
+  # start_lng, start_lat, end_lng, end_lat = start['lng'], start['lat'], end['lng'], end['lat']
+  url = f'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/{start[0]},{start[1]};{end[0]},{end[1]}?roundtrip=false&source=first&destination=last&steps=true&geometries=geojson&access_token={token}'
 
-def calculate_fuzzy_score(price_weight, duration_weight, object_dict):
-    max_price = float(max(object_dict.values(), key=lambda x: x['price'])['price'])
-    min_price = float(min(object_dict.values(), key=lambda x: x['price'])['price'])
-    max_duration = float(max(object_dict.values(), key=lambda x: x['duration'])['duration'])
-    min_duration = float(min(object_dict.values(), key=lambda x: x['duration'])['duration'])
-    max_score = 0
-    result_id = 0
-    for key, value in object_dict.items():
-        price = float(value['price'])
-        duration = float(value['duration'])
+  response = requests.get(url)
+  route = response.json()['trips'][0]
+  return route
+
+def get_latest_price(id):
+    latest_price = Price.objects.filter(gas_station=id).order_by('gas_station', '-created_at').distinct('gas_station')
+    return latest_price[0]
+
+def get_fuzzy_route(price_weight, duration_weight, start):
+    radius = 20
+    stations = get_stations_inside_radius(start[0], start[1], radius)
+    object_dict = {}
+    fuel_type = 'diesel'
+    for station in stations:
+        route = get_optimized_route(start, list(station.geom.coords))
+        fuzzy_input = {'duration': route['duration'], 'price': get_latest_price(station.id), 'route': route}
+        object_dict[station.id] = fuzzy_input
+    
+    price_compare = lambda x: getattr(x['price'], fuel_type)
+    max_price = getattr(max(object_dict.values(),key=price_compare)['price'],fuel_type)
+    min_price = getattr(min(object_dict.values(), key=price_compare)['price'], fuel_type)
+    max_duration = max(object_dict.values(), key=lambda x: x['duration'])['duration']
+    min_duration = min(object_dict.values(), key=lambda x: x['duration'])['duration']
+
+    def fuzzy_score(value):
+        price = getattr(value['price'], fuel_type)
+        duration = value['duration']
         a_duration = 1 - ((duration-min_duration)/max_duration)
         a_price = 1 - ((price-min_price)/max_price)
-        score = price_weight*a_price + duration_weight*a_duration
-        if score > max_score:
-            max_score = score
-            result_id = key  
-    return str(result_id)
+        return price_weight*a_price + duration_weight*a_duration
+
+    return max(object_dict.values(), key=lambda x: fuzzy_score(x))['route']

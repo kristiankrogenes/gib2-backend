@@ -54,10 +54,11 @@ class NearestStations(APIView):
 
 class StationsInsideRadius(APIView):
     def get(self, request, *args, **kwargs):
+        radius = 20
         stations = calculations.get_stations_inside_radius(
             request.query_params['lon'], 
             request.query_params['lat'],
-            20
+            radius
         )
         serializer = GasStationSerializer(stations, many=True)
         return Response(serializer.data)
@@ -84,9 +85,9 @@ class CountyView(APIView):
 
 class FuzzyScoreView(APIView):
      def get(self, request, *args, **kwargs):
-        score = calculations.calculate_fuzzy_score(
+        score = calculations.get_fuzzy_route(
             float(request.query_params['price_weight']),
             float(request.query_params['duration_weight']),
-            json.loads(request.query_params['dict'])
+            [float(request.query_params['start_lng']), float(request.query_params['start_lat'])]
          )
         return Response(score)
