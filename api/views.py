@@ -88,6 +88,7 @@ class FuzzyScoreView(APIView):
         score = calculations.get_fuzzy_route(
             float(request.query_params['price_weight']),
             float(request.query_params['duration_weight']),
-            [float(request.query_params['start_lng']), float(request.query_params['start_lat'])]
+            [float(request.query_params['start_lng']), float(request.query_params['start_lat'])],
+            request.query_params['fuel_type']
          )
         return Response(score)
