@@ -1,13 +1,12 @@
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
-from postgis import Point
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from .models import County, GasStation, Price
 from .serializers import GasStationSerializer, PriceSerializer, CountySerializer
 from .utils import calculations
+import json
 
 def api_home_view(request):
     return HttpResponse("Api for gib2 prosjekt")
@@ -85,22 +84,9 @@ class CountyView(APIView):
 
 class FuzzyScoreView(APIView):
      def get(self, request, *args, **kwargs):
-         score = calculations.calculateFuzzyScore(
-            #  request.query_params['price_weight'],
-            #  request.query_params['duration_weight'],
-            #  request.query_params['dict']
-            0.75,
-            0.25,
-            {1: {
-                'price': 20.83,
-                'duration': 580,
-            },
-            2: {
-                'price': 25.08,
-                'duration': 300,
-            }
-            }
+        score = calculations.calculate_fuzzy_score(
+            float(request.query_params['price_weight']),
+            float(request.query_params['duration_weight']),
+            json.loads(request.query_params['dict'])
          )
-
-         serializer = GasStationSerializer(score, many=True)
-         return Response(score)
+        return Response(score)

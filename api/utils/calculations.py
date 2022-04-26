@@ -107,27 +107,20 @@ def get_data_insights():
     return insights
 
 
-def calculateFuzzyScore(price_weight, duration_weight,object_dict):
-    max_price = 0 
-    min_price = 1000
-    max_duration = 0
-    min_duration = 10**9
+def calculate_fuzzy_score(price_weight, duration_weight, object_dict):
+    max_price = float(max(object_dict.values(), key=lambda x: x['price'])['price'])
+    min_price = float(min(object_dict.values(), key=lambda x: x['price'])['price'])
+    max_duration = float(max(object_dict.values(), key=lambda x: x['duration'])['duration'])
+    min_duration = float(min(object_dict.values(), key=lambda x: x['duration'])['duration'])
     max_score = 0
     result_id = 0
     for key, value in object_dict.items():
-        if value['price'] > max_price:
-            max_price = value['price']
-        if value['price'] < min_price:
-            min_price = value['price']
-        if value['duration'] > max_duration:
-            max_duration = value['duration']
-        if value['duration'] < min_duration:
-            min_duration = value['duration']
-    for key, value in object_dict.items():
-        a_duration = 1 - ((value['duration']-min_duration)/max_duration)
-        a_price = 1 - ((value['price']-min_price)/max_price)
-        value['score'] = price_weight*a_price + duration_weight*a_duration
-        if value['score'] > max_score:
-            max_score = value['score']
-            result_id = key
+        price = float(value['price'])
+        duration = float(value['duration'])
+        a_duration = 1 - ((duration-min_duration)/max_duration)
+        a_price = 1 - ((price-min_price)/max_price)
+        score = price_weight*a_price + duration_weight*a_duration
+        if score > max_score:
+            max_score = score
+            result_id = key  
     return str(result_id)
