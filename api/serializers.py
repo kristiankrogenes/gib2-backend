@@ -18,3 +18,4 @@ class CountySerializer(serializers.GeoFeatureModelSerializer):
         model = County
         geo_field = 'geom'
         fields = '__all__'
+

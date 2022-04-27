@@ -1,9 +1,8 @@
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from .models import County, GasStation, Price
 from .serializers import GasStationSerializer, PriceSerializer, CountySerializer
 from .utils import calculations
@@ -58,20 +57,19 @@ class NearestStations(APIView):
 
 class StationsInsideRadius(APIView):
     def get(self, request, *args, **kwargs):
+        radius = 20
         stations = calculations.get_stations_inside_radius(
             request.query_params['lon'], 
             request.query_params['lat'],
-            20
+            radius
         )
         serializer = GasStationSerializer(stations, many=True)
         return Response(serializer.data)
-
 
 class InsightView(APIView):
     def get(self, request):
         insights = calculations.get_data_insights()
         return Response(insights)
-
 
 class CountyView(APIView):
     def get(self, request):
@@ -85,3 +83,13 @@ class CountyView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FuzzyScoreView(APIView):
+     def get(self, request, *args, **kwargs):
+        score = calculations.get_fuzzy_route(
+            float(request.query_params['price_weight']),
+            float(request.query_params['duration_weight']),
+            [float(request.query_params['start_lng']), float(request.query_params['start_lat'])],
+            request.query_params['fuel_type']
+         )
+        return Response(score)
