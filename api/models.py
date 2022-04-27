@@ -8,8 +8,8 @@ class GasStation(models.Model):
     name = models.CharField(max_length=30)
     brand = models.CharField(max_length=30, null=True, blank=True)
     geom = models.PointField(default="POINT(0.0 0.0)")
-    county = models.CharField(max_length=30, null=True, blank=True)
-    municipality = models.CharField(max_length=30, null=True, blank=True)
+    county = models.CharField(max_length=30, default="Ukjent", null=True, blank=True)
+    municipality = models.CharField(max_length=30, default="Ukjent", null=True, blank=True)
 
     def __str__(self):
         return self.name
