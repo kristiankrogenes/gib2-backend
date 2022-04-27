@@ -21,6 +21,19 @@ def find_nearest_stations(lon, lat):
                 break
     return nearest_stations
 
+def get_closest_station(start):
+    current_position = GEOSGeometry('POINT(' + str(start[0]) + ' ' + str(start[1]) + ')', srid=4326)  
+    all_stations = GasStation.objects.all()
+    closest_station = None
+    for station in all_stations:
+        if closest_station == None:
+            closest_station = station
+        else:
+            dist = current_position.distance(station.geom)
+            if dist < current_position.distance(closest_station.geom):
+                closest_station = station
+    return closest_station
+
 def get_stations_inside_radius(lon, lat, rad):
     current_position = GEOSGeometry('POINT(' + str(lon) + ' ' + str(lat) + ')', srid=4326)  
     stations = GasStation.objects.all()
@@ -160,3 +173,13 @@ def get_fuzzy_route(price_weight, duration_weight, start, fuel_type):
         return price_weight*a_price + duration_weight*a_duration
 
     return max(object_dict.values(), key=lambda x: fuzzy_score(x))['route']
+
+def get_closest_route_to_station(start):
+    print("&&&&&&&&&666")
+    station = get_closest_station(start)
+    print("###", station)
+    route = get_optimized_route(start, list(station.geom.coords))
+    print("####", route)
+    return route
+
+

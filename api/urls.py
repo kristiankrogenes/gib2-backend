@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import FuzzyScoreView, GasStationView, api_home_view, PriceView, NearestStations, InsightView, StationsInsideRadius, CountyView
+from .views import FuzzyScoreView, GasStationView, api_home_view, PriceView, NearestStations, InsightView, StationsInsideRadius, CountyView, OptimizedRouteAirDistanceView
 
 urlpatterns = [
     path('', api_home_view),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('counties/', CountyView.as_view(), name='counties'),  
     path('insights/', InsightView.as_view(), name='data-insights'),
     path('fuzzy/', FuzzyScoreView.as_view(), name='fuzzy-score'),
+    path('or-distance/', OptimizedRouteAirDistanceView.as_view(), name='fuzzy-score'),
 ]

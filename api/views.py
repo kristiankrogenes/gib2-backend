@@ -93,3 +93,11 @@ class FuzzyScoreView(APIView):
             request.query_params['fuel_type']
          )
         return Response(score)
+
+class OptimizedRouteAirDistanceView(APIView):
+     def get(self, request, *args, **kwargs):
+        print("!!!!!!!")
+        route = calculations.get_closest_route_to_station(
+            [float(request.query_params['start_lng']), float(request.query_params['start_lat'])]
+         )
+        return Response(route)
