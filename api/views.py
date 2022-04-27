@@ -7,6 +7,7 @@ from .models import County, GasStation, Price
 from .serializers import GasStationSerializer, PriceSerializer, CountySerializer
 from .utils import calculations
 
+
 def api_home_view(request):
     return HttpResponse("Api for gib2 prosjekt")
 
@@ -20,9 +21,12 @@ class GasStationView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        data = request.data
         serializer = GasStationSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
+            calculations.updateMuniCounty(data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

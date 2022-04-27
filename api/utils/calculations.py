@@ -1,6 +1,7 @@
 from api.models import GasStation, Price
 from django.contrib.gis.geos import GEOSGeometry
 from copy import deepcopy
+from api.models import GasStation
 from django.conf import settings
 import requests
 
@@ -107,6 +108,17 @@ def get_data_insights():
     insights['histogram'] = histogram
 
     return insights
+
+def updateMuniCounty(data):
+    station = GasStation.objects.get(name=data['name'])
+    lon, lat = station.geom.x, station.geom.y
+    api_query = 'https://ws.geonorge.no/kommuneinfo/v1/punkt?nord={}&koordsys=4326&ost={}'.format(lat, lon)
+    response = requests.get(api_query)
+    if response.status_code==200:
+            json_data = response.json()
+            station.county = json_data['fylkesnavn']
+            station.municipality = json_data['kommunenavn']
+            station.save()
 
 def get_optimized_route(start, end):
   token = settings.MAPBOX_ACCESS_TOKEN
