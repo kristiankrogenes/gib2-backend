@@ -119,6 +119,8 @@ def get_optimized_route(start, end):
 
 def get_latest_price(id):
     latest_price = Price.objects.filter(gas_station=id).order_by('gas_station', '-created_at').distinct('gas_station')
+    if len(latest_price) != 1:
+        return None
     return latest_price[0]
 
 def get_fuzzy_route(price_weight, duration_weight, start, fuel_type):
@@ -127,8 +129,10 @@ def get_fuzzy_route(price_weight, duration_weight, start, fuel_type):
     object_dict = {}
     for station in stations:
         route = get_optimized_route(start, list(station.geom.coords))
-        fuzzy_input = {'duration': route['duration'], 'price': get_latest_price(station.id), 'route': route}
-        object_dict[station.id] = fuzzy_input
+        latest_price = get_latest_price(station.id)
+        if latest_price != None:
+            fuzzy_input = {'duration': route['duration'], 'price': latest_price, 'route': route}
+            object_dict[station.id] = fuzzy_input
     
     price_compare = lambda x: getattr(x['price'], fuel_type)
     max_price = getattr(max(object_dict.values(),key=price_compare)['price'],fuel_type)
