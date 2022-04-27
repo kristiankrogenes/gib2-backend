@@ -1,3 +1,4 @@
+from unicodedata import name
 from api.models import GasStation, Price
 from django.contrib.gis.geos import GEOSGeometry
 from copy import deepcopy
@@ -108,7 +109,7 @@ def get_data_insights():
     return insights
 
 def updateMuniCounty(data):
-    station = GasStation.objects.get(id=data['id'])
+    station = GasStation.objects.get(name=data['name'])
     lon, lat = station.geom.x, station.geom.y
     api_query = 'https://ws.geonorge.no/kommuneinfo/v1/punkt?nord={}&koordsys=4326&ost={}'.format(lat, lon)
     response = requests.get(api_query)
