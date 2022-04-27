@@ -87,6 +87,7 @@ def get_data_insights():
 
         update_insights(insight_municipality, fuels)
         update_insights(insight_county, fuels)
+
     default_histogram = {'0': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0}
     histogram = { 
       'diesel': deepcopy(default_histogram),
@@ -98,8 +99,8 @@ def get_data_insights():
       fuels =  {'diesel': price.diesel, 'octane_95': price.octane_95, 'electric': price.electric}
       for key, value in fuels.items():
         for i in range(1, len(values)):
-          if i == len(values) - 1 and value >= values[i]:
-            histogram[key][i] += 1
+          if (i == len(values) - 1) and (value >= values[i]):
+            histogram[key][str(values[i])] += 1
           if values[i-1] <= value < values[i]:
             histogram[key][str(values[i-1])] += 1
     
